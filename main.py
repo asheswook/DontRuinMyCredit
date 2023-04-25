@@ -7,11 +7,11 @@ from typing import Optional
 from PIL import Image
 from io import BytesIO
 import socket
-from environment import Environment
+import ssenv
 #from app.exceptions.common import *
 from aiohttp import ClientSession
 
-env = Environment()
+env = ssenv.Environment()
 env.load_dotenv()
 
 @dataclass
