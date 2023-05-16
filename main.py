@@ -39,6 +39,7 @@ class Parser:
         self.cookieJar = CookieJar(unsafe=True)
         self.session = ClientSession(headers=self.headers, cookie_jar=self.cookieJar)
         self.user: User = None
+        
 
 
     async def close(self):
@@ -46,7 +47,7 @@ class Parser:
 
     
     async def post_login(self) -> bool:
-        url = 'https://smartid.ssu.ac.kr/Symtra_sso/smln_pcs.asp'
+        url = '''https://smartid.ssu.ac.kr/Symtra_sso/smln_pcs.asp?apiReturnUrl=https%3A%2F%2Flms.ssu.ac.kr%2Fxn-sso%2Fgw-cb.php'''
         data = {
             'content_type': 'application/x-www-form-urlencoded',
             'in_tp_bit': '0',
@@ -67,6 +68,9 @@ class Parser:
                         url = html.split('iframe.src="')[1].split('"')[0]
                         async with self.session.get(url) as res:
                             html = await res.text()
+                            soup = BeautifulSoup(html, 'html.parser')
+                            print(soup)
+
                             return True if 'canvas.ssu.ac.kr' in res.url.host else False
                             
                 else:
@@ -104,6 +108,7 @@ class Parser:
         url = f'https://canvas.ssu.ac.kr/learningx/dashboard?user_login={self.user.id}&locale=ko'
         async with self.session.get(url) as res:
             html = await res.text()
+            print(res)
 
             soup = BeautifulSoup(html, 'html.parser')
             print(soup)
@@ -131,6 +136,7 @@ class Parser:
             
 
             print("성공!")
+    
     async def get_subjects(self):
         # await self.session.close()
         # self.session = ClientSession(headers=self.headers, cookies=self.get_ready_for_cookies())
@@ -149,6 +155,11 @@ class Parser:
                 async with self.session.get(url) as res:
                     pass
 
+
+        
+
+    async def get_assignments(self, subject_id: int):
+        url = f"https://canvas.ssu.ac.kr/learningx/api/v1/courses/{subject_id}/modules?include_detail=true"
 
     def get_ready_for_cookies(self):
         cookies1 = self.cookieJar.filter_cookies('https://lms.ssu.ac.kr')
