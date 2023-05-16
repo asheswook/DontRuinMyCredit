@@ -131,6 +131,25 @@ class Parser:
             
 
             print("성공!")
+    async def get_subjects(self):
+        # await self.session.close()
+        # self.session = ClientSession(headers=self.headers, cookies=self.get_ready_for_cookies())
+
+        url = "https://canvas.ssu.ac.kr/"
+        async with self.session.post(url) as res:
+            print(res)
+
+            url = "https://canvas.ssu.ac.kr/"
+            async with self.session.get(url) as res:
+                html = await res.text()
+                soup = BeautifulSoup(html, 'html.parser')
+                print(soup)
+
+                url = "https://canvas.ssu.ac.kr/api/v1/dashboard/dashboard_cards"
+                async with self.session.get(url) as res:
+                    pass
+
+
     def get_ready_for_cookies(self):
         cookies1 = self.cookieJar.filter_cookies('https://lms.ssu.ac.kr')
         cookies2 = self.cookieJar.filter_cookies('https://canvas.ssu.ac.kr')
