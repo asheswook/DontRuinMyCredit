@@ -16,15 +16,15 @@ env.load_dotenv()
 
 @dataclass
 class Subject:
-    id: int
-    name: str
+    subject_id: int
+    subject_name: str
 
 @dataclass
-class Assignment:
+class Assignment(Subject):
+    asi_name: str
     start_date: str
     end_date: str
-    name: str
-    subject: Subject
+    asi_type: str
 
 @dataclass
 class User:
