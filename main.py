@@ -98,6 +98,7 @@ class Parser:
                     print("로그인 성공!")
 
         self.user = User(name= await self.get_username(), id= env.get('USER_ID'))
+        print(self.user.name)
 
 
         url = f'https://canvas.ssu.ac.kr/learningx/dashboard?user_login={self.user.id}&locale=ko'
@@ -106,6 +107,28 @@ class Parser:
 
             soup = BeautifulSoup(html, 'html.parser')
             print(soup)
+            
+            await self.close()
+            self.headers['Authorization'] = "Bearer " + self.get_ready_for_cookies()['xn_api_token']
+            print(self.headers)
+            self.session = ClientSession(headers=self.headers, cookie_jar=self.cookieJar)
+
+
+
+            url = 'https://canvas.ssu.ac.kr/learningx/version'
+            async with self.session.get(url) as res:
+                html = await res.text()
+                print(html)
+            
+                url = 'https://canvas.ssu.ac.kr/learningx/api/v1/users/20232080/terms?include_invited_course_contained=true'
+
+                async with self.session.get(url) as res:
+                    html = await res.text()
+                    soup = BeautifulSoup(html, 'html.parser')
+                    print(soup)
+
+            await self.get_subjects()
+            
 
             print("성공!")
     def get_ready_for_cookies(self):
