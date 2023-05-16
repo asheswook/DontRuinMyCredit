@@ -9,7 +9,7 @@ from io import BytesIO
 import socket
 import ssenv
 #from app.exceptions.common import *
-from aiohttp import ClientSession
+from aiohttp import ClientSession, CookieJar
 
 env = ssenv.Environment()
 env.load_dotenv()
@@ -36,7 +36,8 @@ class Parser:
         self.subjects: list[Subject] = []
         self.assignments: list[Assignment] = []
         self.headers = {'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36'}
-        self.session = ClientSession(headers=self.headers)
+        self.cookieJar = CookieJar(unsafe=True)
+        self.session = ClientSession(headers=self.headers, cookie_jar=self.cookieJar)
         self.user: User = None
 
 
@@ -107,7 +108,21 @@ class Parser:
             print(soup)
 
             print("성공!")
-            
+    def get_ready_for_cookies(self):
+        cookies1 = self.cookieJar.filter_cookies('https://lms.ssu.ac.kr')
+        cookies2 = self.cookieJar.filter_cookies('https://canvas.ssu.ac.kr')
+        cookies3 = self.cookieJar.filter_cookies('https://smartid.ssu.ac.kr')
+        cookies4 = self.cookieJar.filter_cookies('https://ssu.ac.kr')
+        cookies5 = self.cookieJar.filter_cookies('https://class.ssu.ac.kr')
+
+        cookies = {}
+        cklist = [cookies1, cookies2, cookies3, cookies4, cookies5]
+        for ck in cklist:
+            for c in ck:
+                cookies[c] = ck[c].value
+
+        return cookies
+        
                     
 
 
